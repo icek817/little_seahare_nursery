@@ -1,0 +1,7 @@
+# Runtime data
+data/
+*.tmp
+
+# Editor files
+*.swp
+*~

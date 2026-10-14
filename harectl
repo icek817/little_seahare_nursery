@@ -1,0 +1,82 @@
+#!/bin/bash
+
+base_id="001"
+spawn() {
+
+	name="$1"
+	status="sleeping"
+
+	mkdir -p ./data
+	if [ -e "./data/next_id" ] ; then
+		mapfile -t COUNTER < ./data/next_id
+		id="${COUNTER[0]}"
+		
+	else
+		id="$base_id"
+	fi
+	printf '%s\t%s\t%s\n' "$id" "$name" "$status" > "./data/$id.hare"
+	id=$((10#id+1))
+	printf '%03d\n' "$id" > ./data/next_id
+}
+
+name_err() {
+	echo "The nursery requires a name for enrolling your sea hare."
+	echo "Usage: --name <name>"
+	exit 2
+}
+
+print_attribute() {
+	if [ -e "./data/$1.hare" ]; then
+
+		IFS= read -r line < "./data/$1.hare" # id here
+		# TODO: check if the instance file exists
+		read -ra arr <<< "$line"
+		name="${arr[1]}"
+		status="${arr[2]}"
+		echo "$name, mummy just came to see if you're doing well."
+		echo "Little sea hare $name is $status."
+	else
+		echo "This little sea hare is not registered in the nursery."
+		echo "Careless parent. Make sure to enroll your child."
+		exit 3
+	fi
+}
+command=${1:-}
+
+case "$command" in
+	spawn)
+		if [ "$2" = "--name" ] ; then
+			if [ -n "$3" ] ; then
+				spawn "$3"
+
+			else 
+				name_err
+			fi
+		else
+			name_err
+		fi
+		;;
+	list)
+		for file in ./data/*.hare; do
+			[ -f "$file" ] || continue
+			IFS= read -r line < "$file" 
+			printf '%s\n' "$line"
+		done
+		;;
+	status)
+		print_attribute "$2"
+		;;
+	sleep)
+		echo "TODO: bedtime"
+		;;
+	wake)
+		echo "TODO: wake up"
+		;;
+	remove)
+		echo "TODO: delete an instance"
+		;;
+	*)
+		echo "Usage: harectl {spawn|list|status|sleep|wake|remove}"
+        	exit 1
+        	;;
+esac

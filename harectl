@@ -63,6 +63,29 @@ wake() {
 	fi
 
 } 
+
+sleep() {
+	if [ -e "./data/$1.hare" ]; then
+		IFS= read -r line < "./data/$1.hare"
+		read -ra arr <<< "$line"
+		name="${arr[1]}"
+		status="${arr[2]}"
+		if [ "$status" = "awake" ]; then
+			status="sleeping"
+			echo "$name, you're a very good sea hare. Time to bed."
+			printf '%s\t%s\t%s\n' "$1" "$name" "$status" > "./data/$1.hare"
+			echo "$name: \"I want another bedtime story...\""
+			echo "$name is now asleep."
+		else
+			echo "$name is sleeping, do not disturb her dream."
+		fi
+	else
+		echo "This little sea hare is not registered in the nursery."
+		echo "Careless parent. Make sure to enroll your child."
+		exit 3
+	fi
+
+} 
 command=${1:-}
 
 case "$command" in
@@ -95,7 +118,13 @@ case "$command" in
 		fi
 		;;
 	sleep)
-		echo "TODO: bedtime"
+		if [ -n "$2" ]; then
+			sleep "$2"
+		else
+			echo "You can only inspect your own child by ID."
+			echo "Usage: sleep <id>"
+			exit 3
+		fi
 		;;
 	wake)
 		# Usage: wake <id>

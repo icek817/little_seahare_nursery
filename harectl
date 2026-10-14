@@ -29,7 +29,6 @@ print_attribute() {
 	if [ -e "./data/$1.hare" ]; then
 
 		IFS= read -r line < "./data/$1.hare" # id here
-		# TODO: check if the instance file exists
 		read -ra arr <<< "$line"
 		name="${arr[1]}"
 		status="${arr[2]}"
@@ -41,6 +40,29 @@ print_attribute() {
 		exit 3
 	fi
 }
+
+wake() {
+	if [ -e "./data/$1.hare" ]; then
+		IFS= read -r line < "./data/$1.hare"
+		read -ra arr <<< "$line"
+		name="${arr[1]}"
+		status="${arr[2]}"
+		if [ "$status" = "sleeping" ]; then
+			status="awake"
+			echo "$name, wake up! Time for some math snack."
+			printf '%s\t%s\t%s\n' "$1" "$name" "$status" > "./data/$1.hare"
+			echo "$name: \"mmmm, I'm waking.\""
+			echo "$name is now awake."
+		else
+			echo "$name is awake and very enthusiastic!"
+		fi
+	else
+		echo "This little sea hare is not registered in the nursery."
+		echo "Careless parent. Make sure to enroll your child."
+		exit 3
+	fi
+
+} 
 command=${1:-}
 
 case "$command" in
@@ -64,13 +86,26 @@ case "$command" in
 		done
 		;;
 	status)
-		print_attribute "$2"
+		if [ -n "$2"]; then
+			print_attribute "$2"
+		else
+			echo "You can only inspect your own child by ID."
+			echo "Usage: status <id>"
+			exit 3
+		fi
 		;;
 	sleep)
 		echo "TODO: bedtime"
 		;;
 	wake)
-		echo "TODO: wake up"
+		# Usage: wake <id>
+		if [ -n "$2" ]; then
+			wake "$2"
+		else
+			echo "You can only inspect your own child by ID."
+			echo "Usage: wake <id>"
+			exit 3
+		fi
 		;;
 	remove)
 		echo "TODO: delete an instance"

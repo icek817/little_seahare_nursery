@@ -101,6 +101,32 @@ remove() {
 
 } 
 
+draw_hare() {
+    cat <<'HARE'
+       ##           ##
+       ###         ###
+        ###       ###
+         ##       ##
+      .---------'  `-----'  '-.
+    .'   .   .  .               \.
+   /  .  ##.     ##.       .     .\
+  /     .       .          .       \
+ (  .      .  ω    .   .       .    )
+  \___.._______________. ____._____/
+HARE
+}
+
+draw_wake (){
+	cat <<'WAKE'
+		#   #
+		 #_#
+		( o.o )
+		/  .  ` .-\
+	       /~~~~~~~~~~~\
+				 
+WAKE
+}
+
 command=${1:-}
 
 case "$command" in
@@ -108,7 +134,8 @@ case "$command" in
 		if [ "$2" = "--name" ] ; then
 			if [ -n "$3" ] ; then
 				spawn "$3"
-
+				draw_hare
+				echo "little sea hare $3 has arrived"
 			else 
 				name_err
 			fi
@@ -145,6 +172,7 @@ case "$command" in
 		# Usage: wake <id>
 		if [ -n "$2" ]; then
 			wake "$2"
+			draw_wake
 		else
 			echo "You can only wake your own child by ID."
 			echo "Usage: wake <id>"
@@ -165,3 +193,5 @@ case "$command" in
         	exit 1
         	;;
 esac
+
+

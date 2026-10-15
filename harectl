@@ -127,6 +127,18 @@ draw_wake (){
 WAKE
 }
 
+draw_sleep (){
+	cat <<'SLEEP'
+                            z
+		  ₊‧⁺˚#_#˚⁺‧₊   z
+		  ( --.-- )
+		  /  .  .  \
+		|---------------|
+		|               |
+		|---------------|      
+SLEEP
+}
+
 command=${1:-}
 
 case "$command" in
@@ -162,6 +174,7 @@ case "$command" in
 	sleep)
 		if [ -n "$2" ]; then
 			sleep "$2"
+			draw_sleep
 		else
 			echo "You can only make your own child sleep by ID."
 			echo "Usage: sleep <id>"

@@ -139,29 +139,107 @@ draw_sleep (){
 SLEEP
 }
 
+tell_hat_story (){
+	cat <<'STORY'
+	Once upon a time, in a little hat shop in London, there was a very peculiar hatmaker.
+
+	He believed that everything in the world could be a hat, provided it had the right name.
+
+	One evening, three customers arrived.
+
+	The first customer brought him London.
+
+	"Oh!" said the hatmaker.
+
+	"Wow! What a hat city!"
+
+	And he put London on the hat shelf.
+
+	The second customer brought him the Universe.
+
+	The hatmaker examined it carefully.
+
+	"Congratulations! Universe is now a hat."
+
+	And he put the Universe on the hat shelf, too.
+
+	The third customer brought him a beautiful satin hat.
+
+	The hatmaker smiled with relief.
+
+	"Thank God, a legal hat."
+
+	And he put the satin hat beside the others.
+
+	By bedtime, the shop contained three hats:
+
+	One was a city.
+
+	One was the entire Universe.
+
+	And one was actually a hat.
+
+	The hatmaker locked the door, turned off the lights, and went home.
+
+	He had followed every rule.
+
+	Nobody had asked whether the rules made sense.
+
+	Good night, little sea hare.
+
+	And remember: always check the type before putting something on your head.
+
+STORY
+}
+
 bedtime_story (){
 	case "$1" in
 		teacup)
 			echo "Mr Wetherby had a lot of teacups to inspect"
 			echo "so he designed B00, a sea hare-shaped cup inspector."
+			draw_dream "teacups in the list"
+			draw_sleep
 			;;
 		gear)
 			echo "B00 was extremely useful and automatic"
 			echo "so the engineers decided to also use it on gears"
+			draw_dream "scope expanded"
+			draw_sleep
 			;;
 		love)
 			echo "A sea hare met another identical sea hare"
 			echo "and they fell in love..."
 			echo "Surprise, they both disappeared"
 			echo "Poor things. Love reduced them to zero."
+			draw_dream "1841 double sea hare"
+			draw_sleep
 			;;
 		none)
+			draw_sleep
 			return
 			;;
 		*)
 			echo "I don't know what your parent mean, but I'll tell you a hat story."
+			tell_hat_story
+			draw_dream "everything is a hat"
+			draw_sleep
 			;;
 	esac
+}
+
+draw_dream() {
+    cat <<'DREAM'
+       .-~~~~~~~~~~~~~~~~~~~~~~~~~-.
+      (                             )
+DREAM
+
+    	printf '      ( %-25s )\n' "$1"
+
+    cat <<'DREAM'
+       `-~~~~~~~~~~~~~~~~~~~~~~~~~-'
+          o
+            o
+DREAM
 }
 command=${1:-}
 
@@ -202,7 +280,7 @@ case "$command" in
 			echo "Story options: teacup | gear | love | none"
 			read STORY
 			bedtime_story "$STORY" 
-			draw_sleep
+			
 		else
 			echo "You can only make your own child sleep by ID."
 			echo "Usage: sleep <id>"
@@ -232,7 +310,7 @@ case "$command" in
 	*)
 		echo "Usage: harectl {spawn|list|status|sleep|wake|remove}"
         	exit 1
-        	;;
+        ;;
 esac
 
 

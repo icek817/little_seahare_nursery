@@ -1,6 +1,7 @@
 #!/bin/bash
 
 base_id="001"
+SCRIPT_DIR=$(pwd)
 spawn() {
 
 	name="$1"
@@ -28,10 +29,7 @@ name_err() {
 print_attribute() {
 	if [ -e "./data/$1.hare" ]; then
 
-		IFS= read -r line < "./data/$1.hare" # id here
-		read -ra arr <<< "$line"
-		name="${arr[1]}"
-		status="${arr[2]}"
+		IFS=$'\t' read -r id name status < "./data/$1.hare"
 		echo "$name, mummy just came to see if you're doing well."
 		echo "Little sea hare $name is $status."
 	else
@@ -64,10 +62,7 @@ wake() {
 
 sleep() {
 	if [ -e "./data/$1.hare" ]; then
-		IFS= read -r line < "./data/$1.hare"
-		read -ra arr <<< "$line"
-		name="${arr[1]}"
-		status="${arr[2]}"
+		IFS=$'\t' read -r id name status < "./data/$1.hare"
 		if [ "$status" = "awake" ]; then
 			status="sleeping"
 			echo "$name, you're a very good sea hare. Time to bed."
@@ -87,9 +82,7 @@ sleep() {
 
 remove() {
 	if [ -e "./data/$1.hare" ]; then
-		IFS= read -r line < "./data/$1.hare"
-		read -ra arr <<< "$line"
-		name="${arr[1]}"
+		IFS=$'\t' read -r id name status < "./data/$1.hare"
 		rm "./data/$1.hare"
 		echo "$name has graduated."
 		echo "Thank you for your service."
@@ -233,7 +226,7 @@ draw_dream() {
       (                             )
 DREAM
 
-    	printf '      ( %-25s )\n' "$1"
+    	printf '         ( %-25s )\n' "$1"
 
     cat <<'DREAM'
        `-~~~~~~~~~~~~~~~~~~~~~~~~~-'
@@ -275,10 +268,10 @@ case "$command" in
 		;;
 	sleep)
 		if [ -n "$2" ]; then
-			sleep "$2"
 			echo "Would you like to tell a bedtime story to your child?"
 			echo "Story options: teacup | gear | love | none"
 			read STORY
+			sleep "$2"
 			bedtime_story "$STORY" 
 			
 		else
@@ -307,6 +300,29 @@ case "$command" in
 			exit 3
 		fi
 		;;
+	feed)
+		if [ $# -ne 5 ]; then
+			echo "Please provide a valid math expression as snack"
+			echo "Usage: feed <id> [op1] [operator] [op2]"
+			exit 4
+		else
+			if [ -e "./data/$2.hare" ]; then
+				IFS=$'\t' read -r id name status < "./data/$2.hare"
+				source "$SCRIPT_DIR/lib/math.sh"
+				result=$(calculate_int $3 $4 $5)
+				if [[ $? == 0 ]]; then
+					echo "$name: result is $result"
+					echo "math is delicious"
+				else
+					echo "not suitable math for children"
+				fi
+			else
+				echo "This little sea hare is not registered in the nursery."
+				echo "Careless parent. Make sure to enroll your child."
+				exit 3
+			fi
+		fi
+		;;	
 	*)
 		echo "Usage: harectl {spawn|list|status|sleep|wake|remove}"
         	exit 1

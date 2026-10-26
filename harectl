@@ -302,7 +302,7 @@ case "$command" in
 		;;
 	feed)
 		if [ $# -ne 5 ]; then
-			if [ "$4" = "not" ]; then
+			if [ "$3" = "not" ]; then
 				if [ -e "./data/$2.hare" ]; then
 					IFS=$'\t' read -r id name status < "./data/$2.hare"
 					source "$SCRIPT_DIR/lib/math.sh"

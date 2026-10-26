@@ -6,12 +6,30 @@ is_integer() {
 }
 
 calculate_int (){
-	result=0
-	operator="$2"
-	if ! is_integer "$1" || ! is_integer "$3"; then
-        
-        exit 1
-    fi
+	local result=0
+
+    if [[ "$1" == "not" ]]; then
+        # Unary operator: not <operand>
+        if [[ $# -ne 2 ]] || ! is_integer "$2"; then
+            echo "operand: $2"
+			echo "num: $#"
+			return 1
+        fi
+
+        result=$(( ~$2 ))
+		echo "$result"
+		return
+
+    else
+        # Binary operator: <operand1> <operator> <operand2>
+        if [[ $# -ne 3 ]] ||
+           ! is_integer "$1" ||
+           ! is_integer "$3"; then
+            return 1
+		else 
+			operator="$2"
+        fi
+	fi
 	case "$operator" in
 		+)
 			result=$(($1+$3))
@@ -29,6 +47,18 @@ calculate_int (){
 			else
 				result=$(($1/$3))
 			fi
+			;;
+		pow)
+			result=$(($1**$3))
+			;;
+		and)
+			result=$(($1&$3))
+			;;
+		or)
+			result=$(($1|$3))
+			;;
+		xor)
+			result=$(($1^$3))
 			;;
 		*)
 			echo "unknown operator"
